@@ -66,10 +66,21 @@ deploy_api() {
 deploy_job() {
   : "${APP_URL:?set APP_URL in config/deploy.env (the service URL)}"
   local image="$REPO/job:$TAG"
+  # Mount only the secrets that exist: without eodhd-api-key, route every provider to yahoo;
+  # without resend-api-key, alerts are logged instead of emailed.
+  local secrets=()
+  $G secrets describe eodhd-api-key >/dev/null 2>&1 && secrets+=("EODHD_API_KEY=eodhd-api-key:latest")
+  $G secrets describe resend-api-key >/dev/null 2>&1 && secrets+=("RESEND_API_KEY=resend-api-key:latest")
+  if [ ${#secrets[@]} -eq 0 ] || ! printf '%s\n' "${secrets[@]}" | grep -q EODHD; then
+    MARKET_DATA_PROVIDER=yahoo; MARKET_DATA_PROVIDER_TSE=yahoo; FX_PROVIDER=yahoo; CRYPTO_HISTORY_PROVIDER=yahoo
+    echo "no eodhd-api-key secret: using Yahoo for all market data"
+  fi
+  local secret_flag="--clear-secrets"
+  [ ${#secrets[@]} -gt 0 ] && secret_flag="--set-secrets=$(IFS=,; echo "${secrets[*]}")"
   build job/Dockerfile "$image"
   $G run jobs deploy "$JOB" --image="$image" --region="$REGION" --service-account="$JOB_SA" \
     --tasks=1 --max-retries=1 --task-timeout=15m --cpu=1 --memory=512Mi \
-    --set-secrets="EODHD_API_KEY=eodhd-api-key:latest,RESEND_API_KEY=resend-api-key:latest" \
+    "$secret_flag" \
     --set-env-vars="^|^GOOGLE_CLOUD_PROJECT=$PROJECT_ID|APP_URL=$APP_URL|MARKET_DATA_PROVIDER=${MARKET_DATA_PROVIDER:-eodhd}|MARKET_DATA_PROVIDER_TSE=${MARKET_DATA_PROVIDER_TSE:-yahoo}|FX_PROVIDER=${FX_PROVIDER:-eodhd}|CRYPTO_HISTORY_PROVIDER=${CRYPTO_HISTORY_PROVIDER:-eodhd}|SPOT_PROVIDER=coingecko|ALERT_TO=${ALERT_TO:-}|ALERT_FROM=${ALERT_FROM:-Premium Watch <onboarding@resend.dev>}|INTRADAY_ENABLED=${INTRADAY_ENABLED:-false}"
 }
 
