@@ -62,3 +62,18 @@ export function localTime(instant: Date, timeZone: string): string {
   const p = parts(instant, timeZone);
   return `${p.hour}:${p.minute}`;
 }
+
+function tzOffsetMs(instant: Date, timeZone: string): number {
+  const p = parts(instant, timeZone);
+  const asUtc = Date.UTC(+p.year!, +p.month! - 1, +p.day!, +p.hour!, +p.minute!);
+  return asUtc - Math.floor(instant.getTime() / 60_000) * 60_000;
+}
+
+/** The instant when the wall clock in `timeZone` shows `date` `time` (`HH:MM`). */
+export function zonedToUtc(date: IsoDate, time: string, timeZone: string): Date {
+  const [h, m] = time.split(':').map(Number);
+  const wall = Date.parse(`${date}T00:00:00Z`) + (h! * 60 + m!) * 60_000;
+  let t = wall - tzOffsetMs(new Date(wall), timeZone);
+  t = wall - tzOffsetMs(new Date(t), timeZone);
+  return new Date(t);
+}

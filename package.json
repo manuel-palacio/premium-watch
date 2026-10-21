@@ -6,18 +6,25 @@
     "shared",
     "job",
     "api",
-    "web"
+    "web",
+    "firestore"
   ],
   "scripts": {
     "test": "npm run test --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
-    "typecheck": "npm run typecheck --workspaces --if-present"
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "emulators": "node scripts/render-rules.mjs && PATH=/opt/homebrew/opt/openjdk@21/bin:$PATH firebase emulators:start --project demo-premium-watch --import emulator-data --export-on-exit emulator-data",
+    "seed:dev": "FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GOOGLE_CLOUD_PROJECT=demo-premium-watch MARKET_DATA_PROVIDER=fake npm run seed -w @pw/job -- --demo",
+    "job:dev": "FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GOOGLE_CLOUD_PROJECT=demo-premium-watch MARKET_DATA_PROVIDER=fake npm start -w @pw/job --",
+    "backfill:dev": "FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GOOGLE_CLOUD_PROJECT=demo-premium-watch MARKET_DATA_PROVIDER=fake npm run backfill -w @pw/job --",
+    "backfill": "node scripts/with-deploy-env.mjs npm run backfill -w @pw/job --"
   },
   "engines": {
     "node": ">=22.18"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
+    "firebase-tools": "^15.34.1",
     "typescript": "^7.0.2",
     "vitest": "^5.0.5"
   }

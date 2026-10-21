@@ -1,0 +1,16 @@
+rules_version = '2';
+
+// Rendered by scripts/render-rules.mjs from firestore.rules.tmpl; edit the template.
+// Only the owner may read. Nobody writes from the client: the admin API and the job write
+// with the Admin SDK, which bypasses these rules.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner() {
+      return request.auth != null && request.auth.uid == '__OWNER_UID__';
+    }
+    match /{document=**} {
+      allow read: if isOwner();
+      allow write: if false;
+    }
+  }
+}

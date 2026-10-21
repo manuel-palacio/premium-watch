@@ -1,4 +1,4 @@
-import { isWeekday, localDate, localTime } from './dates.ts';
+import { isWeekday, localDate, localTime, zonedToUtc } from './dates.ts';
 import type { Currency, ExchangeCode, IsoDate } from './types.ts';
 
 export interface ExchangeInfo {
@@ -69,4 +69,10 @@ export function isTradingHours(code: ExchangeCode, instant: Date): boolean {
 export function isAfterClose(code: ExchangeCode, instant: Date): boolean {
   const ex = EXCHANGES[code];
   return isWeekday(localDate(instant, ex.timeZone)) && localTime(instant, ex.timeZone) >= ex.close;
+}
+
+/** The instant of the closing bell on `date`. */
+export function closeInstant(code: ExchangeCode, date: IsoDate): Date {
+  const ex = EXCHANGES[code];
+  return zonedToUtc(date, ex.close, ex.timeZone);
 }

@@ -11,3 +11,5 @@ ui-debug.log*
 emulator-data/
 *-key.json
 service-account*.json
+firestore/firestore.rules
+config/deploy.env

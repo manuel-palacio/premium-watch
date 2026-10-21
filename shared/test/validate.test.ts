@@ -54,3 +54,12 @@ describe('exchange hours', () => {
   });
   it('localDate', () => expect(localDate(new Date('2026-10-21T23:30:00Z'), 'Asia/Tokyo')).toBe('2026-10-22'));
 });
+
+describe('closeInstant', () => {
+  it('handles DST in New York and fixed JST', async () => {
+    const { closeInstant } = await import('../src/index.ts');
+    expect(closeInstant('NASDAQ', '2026-10-21').toISOString()).toBe('2026-10-21T20:00:00.000Z');
+    expect(closeInstant('NASDAQ', '2026-12-01').toISOString()).toBe('2026-12-01T21:00:00.000Z');
+    expect(closeInstant('TSE', '2026-10-21').toISOString()).toBe('2026-10-21T06:30:00.000Z');
+  });
+});
