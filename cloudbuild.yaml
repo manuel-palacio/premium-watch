@@ -1,0 +1,8 @@
+# Builds one image on Cloud Build (linux/amd64, which Cloud Run needs; this Mac builds arm64).
+# gcloud builds submit --config cloudbuild.yaml --substitutions=_DOCKERFILE=api/Dockerfile,_IMAGE=...
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: ['build', '-f', '${_DOCKERFILE}', '-t', '${_IMAGE}', '.']
+images: ['${_IMAGE}']
+options:
+  logging: CLOUD_LOGGING_ONLY

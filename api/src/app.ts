@@ -13,7 +13,8 @@ export interface AppDeps {
   /** Returns the uid for a valid Firebase ID token, or throws. */
   verifyToken: (token: string) => Promise<string>;
   ownerUid: string;
-  publicConfig: PublicConfig;
+  /** Built per request: the auth domain defaults to the host the app is served from. */
+  publicConfig: (host: string) => PublicConfig;
   now?: () => Date;
 }
 
@@ -36,7 +37,7 @@ export function createApi(deps: AppDeps): Hono<Env> {
   const now = () => (deps.now ?? (() => new Date()))().toISOString();
   const api = new Hono<Env>();
 
-  api.get('/config', (c) => c.json(deps.publicConfig));
+  api.get('/config', (c) => c.json(deps.publicConfig(c.req.header('x-forwarded-host') ?? c.req.header('host') ?? '')));
   api.get('/healthz', (c) => c.json({ ok: true }));
 
   const requireOwner: MiddlewareHandler<Env> = async (c, next) => {

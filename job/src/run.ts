@@ -135,7 +135,10 @@ export async function runClose(group: MarketGroup | 'all', deps: Deps): Promise<
       const existing = await deps.store.getSnapshots(dates.map((d) => snapshotId(company.id, d)));
       const todo = dates.filter((d) => !existing.get(snapshotId(company.id, d))?.final);
       sum.skippedFinal += dates.length - todo.length;
-      if (!todo.length) continue;
+      if (!todo.length) {
+        sum.alertsFired += await evaluateAlerts(company, deps);
+        continue;
+      }
 
       const [bars, fxBars, ledger, spotPoints] = await Promise.all([
         deps.market.dailyCloses(company, addDays(first, -7), latest),

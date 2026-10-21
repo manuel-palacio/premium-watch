@@ -13,7 +13,7 @@ const api = createApi({
     if (t === 'expired') throw new Error('expired');
     return t; // the test token is the uid
   },
-  publicConfig: { firebase: { apiKey: 'k', authDomain: 'd', projectId: 'demo-premium-watch' }, emulators: true },
+  publicConfig: (host) => ({ firebase: { apiKey: 'k', authDomain: host, projectId: 'demo-premium-watch' }, emulators: true }),
   now: () => new Date('2026-10-22T10:00:00Z'),
 });
 

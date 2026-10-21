@@ -21,20 +21,23 @@ if (market !== 'all' && !(market in MARKET_GROUPS)) {
   process.exit(2);
 }
 
+if (values.mode !== 'close' && values.mode !== 'intraday') {
+  console.error('--mode must be close or intraday');
+  process.exit(2);
+}
+if (values.mode === 'intraday' && process.env.INTRADAY_ENABLED !== 'true') {
+  console.log('intraday mode is disabled (INTRADAY_ENABLED != true); nothing to do');
+  process.exit(0);
+}
+
 const deps = depsFromEnv();
 const started = Date.now();
 let summary;
-if (values.mode === 'close') {
-  summary = await runClose(market, deps);
-} else if (values.mode === 'intraday') {
-  if (process.env.INTRADAY_ENABLED !== 'true') {
-    console.log('intraday mode is disabled (INTRADAY_ENABLED != true); nothing to do');
-    process.exit(0);
-  }
-  summary = await runIntraday(market, deps);
-} else {
-  console.error('--mode must be close or intraday');
-  process.exit(2);
+try {
+  summary = values.mode === 'close' ? await runClose(market, deps) : await runIntraday(market, deps);
+} catch (e) {
+  console.log(JSON.stringify({ severity: 'ERROR', message: `${values.mode} run for ${market} failed: ${(e as Error).message}` }));
+  process.exit(1);
 }
 
 // One JSON line, so Cloud Logging indexes the fields.

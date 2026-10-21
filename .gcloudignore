@@ -1,0 +1,7 @@
+.git
+**/node_modules
+**/dist
+.playwright-mcp
+emulator-data
+config/deploy.env
+*.log

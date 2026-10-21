@@ -19,7 +19,14 @@
     "backfill:dev": "METADATA_SERVER_DETECTION=none FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GOOGLE_CLOUD_PROJECT=demo-premium-watch MARKET_DATA_PROVIDER=fake npm run backfill -w @pw/job --",
     "backfill": "node scripts/with-deploy-env.mjs npm run backfill -w @pw/job --",
     "dev": "concurrently -k -n emu,api,web -c yellow,cyan,magenta \"npm run emulators\" \"npm run dev:api\" \"npm run dev -w @pw/web\"",
-    "dev:api": "METADATA_SERVER_DETECTION=none FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GOOGLE_CLOUD_PROJECT=demo-premium-watch OWNER_UID=owner-uid-for-emulator MARKET_DATA_PROVIDER=fake STATIC_DIR=../web/dist npm run dev -w @pw/api"
+    "dev:api": "METADATA_SERVER_DETECTION=none FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GOOGLE_CLOUD_PROJECT=demo-premium-watch OWNER_UID=owner-uid-for-emulator MARKET_DATA_PROVIDER=fake STATIC_DIR=../web/dist npm run dev -w @pw/api",
+    "deploy:setup": "scripts/deploy.sh setup",
+    "deploy:api": "scripts/deploy.sh api",
+    "deploy:job": "scripts/deploy.sh job",
+    "deploy:scheduler": "scripts/deploy.sh scheduler",
+    "deploy:rules": "scripts/deploy.sh rules",
+    "deploy": "scripts/deploy.sh all",
+    "job:run": "node scripts/with-deploy-env.mjs bash -c 'gcloud run jobs execute premium-watch-job --project=$PROJECT_ID --region=$REGION --wait'"
   },
   "engines": {
     "node": ">=22.18"
@@ -27,7 +34,6 @@
   "devDependencies": {
     "@types/node": "^26.6.5",
     "concurrently": "^10.0.6",
-    "firebase-tools": "^15.34.1",
     "typescript": "^7.0.2",
     "vitest": "^5.0.5"
   }

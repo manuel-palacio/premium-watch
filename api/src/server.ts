@@ -22,15 +22,17 @@ const api = createApi({
   db,
   ownerUid: env.OWNER_UID ?? '',
   verifyToken: async (token) => (await auth.verifyIdToken(token, true)).uid,
-  publicConfig: {
+  publicConfig: (host) => ({
     firebase: {
       apiKey: env.FIREBASE_API_KEY ?? 'demo-key',
-      authDomain: env.FIREBASE_AUTH_DOMAIN ?? `${projectId}.firebaseapp.com`,
+      // Same-origin auth domain (proxied below) so sign-in works in Safari, which blocks
+      // the third-party storage the default *.firebaseapp.com handler relies on.
+      authDomain: env.FIREBASE_AUTH_DOMAIN || (emulators ? `${projectId}.firebaseapp.com` : host),
       projectId,
       ...(env.FIREBASE_APP_ID ? { appId: env.FIREBASE_APP_ID } : {}),
     },
     emulators,
-  },
+  }),
 });
 
 const app = new Hono();
@@ -43,6 +45,22 @@ app.use(
   }),
 );
 app.route('/api', api);
+
+// Proxy Firebase's auth handler: https://firebase.google.com/docs/auth/web/redirect-best-practices
+const firebaseHost = `${projectId}.firebaseapp.com`;
+app.all('/__/*', async (c) => {
+  const url = new URL(c.req.url);
+  const upstream = await fetch(`https://${firebaseHost}${url.pathname}${url.search}`, {
+    method: c.req.method,
+    headers: { accept: c.req.header('accept') ?? '*/*', 'content-type': c.req.header('content-type') ?? '' },
+    ...(c.req.method === 'GET' || c.req.method === 'HEAD' ? {} : { body: await c.req.arrayBuffer() }),
+    redirect: 'manual',
+  });
+  const headers = new Headers(upstream.headers);
+  headers.delete('content-encoding');
+  headers.delete('content-length');
+  return new Response(upstream.body, { status: upstream.status, headers });
+});
 
 const staticRoot = env.STATIC_DIR ?? './public';
 app.use('/assets/*', async (c, next) => {
