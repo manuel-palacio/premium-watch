@@ -1,0 +1,24 @@
+{
+  "name": "premium-watch",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "shared",
+    "job",
+    "api",
+    "web"
+  ],
+  "scripts": {
+    "test": "npm run test --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=22.18"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  }
+}
