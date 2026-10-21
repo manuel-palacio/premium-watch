@@ -1,5 +1,6 @@
 import { parseArgs } from 'node:util';
 import type { Company } from '@pw/shared';
+import { getAuth } from 'firebase-admin/auth';
 import { firestore } from '../store.ts';
 
 /**
@@ -77,5 +78,13 @@ if (values.demo) {
   }
   await batch.commit();
   console.log(`demo ledger: ${n} entries written`);
+
+  if (process.env.FIREBASE_AUTH_EMULATOR_HOST) {
+    // A Google-linked owner account, so the emulator's sign-in popup offers it.
+    const uid = 'owner-uid-for-emulator';
+    const email = 'owner@example.com';
+    const r = await getAuth().importUsers([{ uid, email, emailVerified: true, displayName: 'Dev Owner', providerData: [{ uid: 'dev-owner-google', providerId: 'google.com', email, displayName: 'Dev Owner' }] }]);
+    console.log(r.failureCount ? `owner account: ${r.errors[0]?.error.message}` : `owner account ${email} (uid ${uid}) ready in the Auth emulator`);
+  }
 }
 process.exit(0);

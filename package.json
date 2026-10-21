@@ -14,16 +14,19 @@
     "build": "npm run build --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "emulators": "node scripts/render-rules.mjs && PATH=/opt/homebrew/opt/openjdk@21/bin:$PATH firebase emulators:start --project demo-premium-watch --import emulator-data --export-on-exit emulator-data",
-    "seed:dev": "FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GOOGLE_CLOUD_PROJECT=demo-premium-watch MARKET_DATA_PROVIDER=fake npm run seed -w @pw/job -- --demo",
-    "job:dev": "FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GOOGLE_CLOUD_PROJECT=demo-premium-watch MARKET_DATA_PROVIDER=fake npm start -w @pw/job --",
-    "backfill:dev": "FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GOOGLE_CLOUD_PROJECT=demo-premium-watch MARKET_DATA_PROVIDER=fake npm run backfill -w @pw/job --",
-    "backfill": "node scripts/with-deploy-env.mjs npm run backfill -w @pw/job --"
+    "seed:dev": "METADATA_SERVER_DETECTION=none FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GOOGLE_CLOUD_PROJECT=demo-premium-watch MARKET_DATA_PROVIDER=fake npm run seed -w @pw/job -- --demo",
+    "job:dev": "METADATA_SERVER_DETECTION=none FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GOOGLE_CLOUD_PROJECT=demo-premium-watch MARKET_DATA_PROVIDER=fake npm start -w @pw/job --",
+    "backfill:dev": "METADATA_SERVER_DETECTION=none FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GOOGLE_CLOUD_PROJECT=demo-premium-watch MARKET_DATA_PROVIDER=fake npm run backfill -w @pw/job --",
+    "backfill": "node scripts/with-deploy-env.mjs npm run backfill -w @pw/job --",
+    "dev": "concurrently -k -n emu,api,web -c yellow,cyan,magenta \"npm run emulators\" \"npm run dev:api\" \"npm run dev -w @pw/web\"",
+    "dev:api": "METADATA_SERVER_DETECTION=none FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GOOGLE_CLOUD_PROJECT=demo-premium-watch OWNER_UID=owner-uid-for-emulator MARKET_DATA_PROVIDER=fake STATIC_DIR=../web/dist npm run dev -w @pw/api"
   },
   "engines": {
     "node": ">=22.18"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
+    "concurrently": "^10.0.6",
     "firebase-tools": "^15.34.1",
     "typescript": "^7.0.2",
     "vitest": "^5.0.5"

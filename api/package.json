@@ -1,0 +1,19 @@
+{
+  "name": "@pw/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --conditions=development --watch src/server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "cd .. && PATH=/opt/homebrew/opt/openjdk@21/bin:$PATH firebase emulators:exec --only firestore --project demo-premium-watch 'npx vitest run --root api'"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.5",
+    "@pw/shared": "*",
+    "firebase-admin": "^14.5.0",
+    "hono": "^4.13.13"
+  }
+}

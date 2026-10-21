@@ -13,3 +13,4 @@ emulator-data/
 service-account*.json
 firestore/firestore.rules
 config/deploy.env
+.playwright-mcp/
