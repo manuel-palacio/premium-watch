@@ -103,6 +103,10 @@ mstr,2026-10-20,shares_diluted,"312,000,000",https://www.sec.gov/...,10-Q
 metaplanet,2026-09-30,debt,15000000000,https://metaplanet.jp/en/shareholders/disclosures,"JPY, bonds"
 ```
 
+The same CSV can be imported from the terminal (same checks, all-or-nothing):
+`npm run import-ledger -- data/ledger/2026-10-23.csv [--dry-run]`. Imported files are kept in
+`data/ledger/` as a record of what was entered and where it came from.
+
 Snapshots are immutable once final. After entering **historical** ledger rows, rebuild the
 affected days:
 
