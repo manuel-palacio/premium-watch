@@ -2,7 +2,8 @@
 // Secrets come from Secret Manager via gcloud, so they never sit in a file.
 import { execFileSync, spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
-const env = Object.fromEntries(readFileSync('config/deploy.env', 'utf8').split('\n').filter((l) => /^\w+=/.test(l)).map((l) => [l.slice(0, l.indexOf('=')), l.slice(l.indexOf('=') + 1)]));
+import { parseEnv } from 'node:util';
+const env = parseEnv(readFileSync('config/deploy.env', 'utf8'));
 const secret = (name) => {
   try {
     return execFileSync('gcloud', ['secrets', 'versions', 'access', 'latest', `--secret=${name}`, `--project=${env.PROJECT_ID}`], { encoding: 'utf8' }).trim();
