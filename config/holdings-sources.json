@@ -1,0 +1,23 @@
+{
+  "$comment": "Where the holdings job looks, per company id. `domains`: a proposed source must be on one of these (subdomains included). `hints`: pages the research step starts from. Companies not listed fall back to `default`.",
+  "default": { "domains": ["sec.gov"], "hints": [] },
+  "mstr": {
+    "domains": ["sec.gov", "strategy.com"],
+    "hints": [
+      "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1050446&type=8-K&dateb=&owner=include&count=40",
+      "https://api.strategy.com/btc/bitcoinKpis"
+    ]
+  },
+  "metaplanet": {
+    "domains": ["metaplanet.jp", "xj-storage.jp"],
+    "hints": ["https://metaplanet.jp/en/shareholders/disclosures"]
+  },
+  "upxi": {
+    "domains": ["sec.gov", "upexi.com"],
+    "hints": ["https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1775194&type=&dateb=&owner=include&count=40", "https://ir.upexi.com"]
+  },
+  "dfdv": {
+    "domains": ["sec.gov", "defidevcorp.com"],
+    "hints": ["https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1805526&type=8-K&dateb=&owner=include&count=40"]
+  }
+}

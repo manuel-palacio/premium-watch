@@ -107,6 +107,28 @@ The same CSV can be imported from the terminal (same checks, all-or-nothing):
 `npm run import-ledger -- data/ledger/2026-10-23.csv [--dry-run]`. Imported files are kept in
 `data/ledger/` as a record of what was entered and where it came from.
 
+### Automatic holdings updates (runs on the Mac mini)
+
+`npm run update-holdings -- [--company mstr ...] [--dry-run]` looks for newer holdings
+disclosures and adds them to the ledger. For each active company:
+
+1. A headless Claude Code run, limited to WebSearch and WebFetch, proposes the latest stated
+   total with its as-of date, source URL and the sentence it comes from.
+2. `job/src/holdings/check.ts` accepts it only if it is newer than the ledger, not in the
+   future, within 0.5–2× of the current holdings, and its source is on one of the company's
+   domains in `config/holdings-sources.json` (sec.gov by default).
+3. The job downloads the source itself (HTML or PDF) and checks the number is in it.
+
+Accepted entries go into the ledger with an `auto:` note, are appended to
+`data/ledger/auto-<date>.csv`, and the company's snapshots are rebuilt from the new date.
+Anything else is reported "to review". Share counts, debt and cash are still entered by hand.
+
+It runs from launchd on weekdays at 21:00 (`ops/update-holdings.sh`,
+`ops/com.premiumwatch.holdings.plist`) and sends the outcome to Telegram with `tg-notify`
+when something was added or needs review. It needs `gcloud auth application-default login`,
+the Claude Code login, and `SEC_USER_AGENT` in `config/deploy.env`. Logs are in
+`~/Library/Logs/premium-watch/`.
+
 Snapshots are immutable once final. After entering **historical** ledger rows, rebuild the
 affected days:
 

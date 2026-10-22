@@ -6,7 +6,7 @@ import { parseEnv } from 'node:util';
 const env = parseEnv(readFileSync('config/deploy.env', 'utf8'));
 const secret = (name) => {
   try {
-    return execFileSync('gcloud', ['secrets', 'versions', 'access', 'latest', `--secret=${name}`, `--project=${env.PROJECT_ID}`], { encoding: 'utf8' }).trim();
+    return execFileSync('gcloud', ['secrets', 'versions', 'access', 'latest', `--secret=${name}`, `--project=${env.PROJECT_ID}`], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
   } catch {
     return '';
   }
