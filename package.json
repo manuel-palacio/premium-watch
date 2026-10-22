@@ -18,6 +18,7 @@
     "job:dev": "METADATA_SERVER_DETECTION=none FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GOOGLE_CLOUD_PROJECT=demo-premium-watch MARKET_DATA_PROVIDER=fake npm start -w @pw/job --",
     "backfill:dev": "METADATA_SERVER_DETECTION=none FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GOOGLE_CLOUD_PROJECT=demo-premium-watch MARKET_DATA_PROVIDER=fake npm run backfill -w @pw/job --",
     "backfill": "node scripts/with-deploy-env.mjs npm run backfill -w @pw/job --",
+    "import-ledger": "node scripts/with-deploy-env.mjs npm run import-ledger -w @pw/job --",
     "dev": "concurrently -k -n emu,api,web -c yellow,cyan,magenta \"npm run emulators\" \"npm run dev:api\" \"npm run dev -w @pw/web\"",
     "dev:api": "METADATA_SERVER_DETECTION=none FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 GOOGLE_CLOUD_PROJECT=demo-premium-watch OWNER_UID=owner-uid-for-emulator MARKET_DATA_PROVIDER=fake STATIC_DIR=../web/dist npm run dev -w @pw/api",
     "deploy:setup": "scripts/deploy.sh setup",
