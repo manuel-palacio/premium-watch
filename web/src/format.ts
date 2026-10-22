@@ -58,3 +58,14 @@ const MISSING_LABEL: Record<string, string> = {
   'fx:stale': 'FX stale',
 };
 export const missingLabel = (m: string) => MISSING_LABEL[m] ?? m;
+
+/** 2026-10-22 → 22 Oct 2026. */
+export function longDate(iso: string): string {
+  return new Date(`${iso}T12:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+}
+
+/** 1 → 1st, 22 → 22nd, 13 → 13th. */
+export function ordinal(n: number): string {
+  const s = n % 100 >= 11 && n % 100 <= 13 ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' } as Record<number, string>)[n % 10] ?? 'th';
+  return `${n}${s}`;
+}

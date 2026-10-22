@@ -1,3 +1,4 @@
+import '@fontsource-variable/recursive/casl.css';
 import './style.css';
 import { takePageCharts, type ChartHandle } from './charts.ts';
 import { ApiError, apiCall, invalidate } from './data.ts';

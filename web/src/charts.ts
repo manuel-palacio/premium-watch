@@ -1,4 +1,4 @@
-import { ColorType, LineSeries, LineStyle, createChart, type IChartApi, type ISeriesApi, type LineData, type Time } from 'lightweight-charts';
+import { ColorType, LineSeries, LineStyle, PriceScaleMode, createChart, type IChartApi, type ISeriesApi, type LineData, type Time } from 'lightweight-charts';
 
 const css = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 export const lineColor = (i: number) => css(`--line-${(i % 6) + 1}`);
@@ -27,7 +27,7 @@ export interface Line {
 }
 
 export interface ChartHandle {
-  setLines(lines: Line[], opts?: { refLine?: number; precision?: number }): void;
+  setLines(lines: Line[], opts?: { refLine?: number; precision?: number; log?: boolean }): void;
   destroy(): void;
 }
 
@@ -39,6 +39,7 @@ export function lineChart(el: HTMLElement): ChartHandle {
 
   return {
     setLines(lines, opts = {}) {
+      chart.priceScale('right').applyOptions({ mode: opts.log ? PriceScaleMode.Logarithmic : PriceScaleMode.Normal });
       for (const s of series) chart.removeSeries(s);
       series = lines.map((line, i) => {
         const s = chart.addSeries(LineSeries, {
@@ -52,7 +53,7 @@ export function lineChart(el: HTMLElement): ChartHandle {
         const data: LineData<Time>[] = line.points.filter((p) => p.value !== null && Number.isFinite(p.value)).map((p) => ({ time: p.date as Time, value: p.value as number }));
         s.setData(data);
         if (i === 0 && opts.refLine !== undefined) {
-          s.createPriceLine({ price: opts.refLine, color: css('--bad'), lineWidth: 1, lineStyle: LineStyle.Dashed, axisLabelVisible: true, title: `${opts.refLine.toFixed(1)}×` });
+          s.createPriceLine({ price: opts.refLine, color: css('--parity'), lineWidth: 1, lineStyle: LineStyle.Dashed, axisLabelVisible: true, title: `${opts.refLine.toFixed(1)}×` });
         }
         return s;
       });

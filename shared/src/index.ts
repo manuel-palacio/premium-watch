@@ -7,3 +7,5 @@ export * from './metrics.ts';
 export * from './snapshot.ts';
 export * from './alerts.ts';
 export * from './validate.ts';
+export * from './interpret.ts';
+export * from './decide.ts';
