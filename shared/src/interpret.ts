@@ -13,6 +13,8 @@ export interface Reading {
 export interface ReadingContext {
   /** Diluted mNAV over the past year. */
   range?: RangeStats | null;
+  /** How to name that window, e.g. "past year" or "since 15 Sep 2026" when history is shorter. */
+  rangeLabel?: string;
   /** Years for coin yield to earn back the premium (paybackYears). */
   payback?: number | null;
 }
@@ -47,9 +49,11 @@ export function readMnav(m: Pick<Metrics, 'mnavDiluted' | 'mnavEv' | 'coinYield9
   const r = ctx.range;
   if (r) {
     const pos = rangePosition(r.percentile);
-    if (pos === 'low') parts.push(`That is near the bottom of its past year (${x(r.min)} to ${x(r.max)}).`);
-    else if (pos === 'high') parts.push(`That is near the top of its past year (${x(r.min)} to ${x(r.max)}).`);
-    else parts.push(`That is mid-range for its past year (${x(r.min)} to ${x(r.max)}).`);
+    const span = ctx.rangeLabel ?? 'past year';
+    const of = span === 'past year' ? 'its past year' : `its range ${span}`;
+    if (pos === 'low') parts.push(`That is near the bottom of ${of} (${x(r.min)} to ${x(r.max)}).`);
+    else if (pos === 'high') parts.push(`That is near the top of ${of} (${x(r.min)} to ${x(r.max)}).`);
+    else parts.push(`That is mid-range for ${of} (${x(r.min)} to ${x(r.max)}).`);
   }
 
   const y = m.coinYield90d;

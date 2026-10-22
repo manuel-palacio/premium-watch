@@ -78,14 +78,14 @@ export async function companyPage(id: string): Promise<HTMLElement> {
       ? h(
           'section',
           { class: 'own-range' },
-          h('h2', null, 'Past year and today'),
+          h('h2', null, a.rangeShort ? `Today against its range ${a.rangeLabel}` : 'Past year and today'),
           scaleAxis(scale),
           premiumBar(scale, a.mnav, a.range, a.reading?.tone ?? null, company.name),
           a.range
             ? h(
                 'p',
                 { class: 'range-note' },
-                `Low ${mnav(a.range.min)}, median ${mnav(a.range.median)}, high ${mnav(a.range.max)}. Today is higher than ${Math.round(a.range.percentile)}% of the past year's trading days.`,
+                `Low ${mnav(a.range.min)}, median ${mnav(a.range.median)}, high ${mnav(a.range.max)}. Today is higher than ${Math.round(a.range.percentile)}% of trading days ${a.rangeLabel === 'past year' ? 'in the past year' : a.rangeLabel}.`,
               )
             : h('p', { class: 'range-note' }, 'Not enough history for a range yet.'),
         )

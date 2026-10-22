@@ -42,6 +42,9 @@ describe('readMnav with history and payback', () => {
     expect(readMnav(m(2.9), { range: { ...range, percentile: 95 } })?.text).toContain('near the top');
     expect(readMnav(m(2), { range: { ...range, percentile: 50 } })?.text).toContain('mid-range');
   });
+  it('names a shorter window', () => {
+    expect(readMnav(m(1.3), { range, rangeLabel: 'since 15 Sep 2026' })?.text).toContain('near the bottom of its range since 15 Sep 2026');
+  });
   it('states the payback only for a premium', () => {
     expect(readMnav(m(1.6, null, 5), { payback: 2.4 })?.text).toContain('about 2.4 years');
     expect(readMnav(m(1.1, null, 9), { payback: 0.5 })?.text).toContain('within a year');

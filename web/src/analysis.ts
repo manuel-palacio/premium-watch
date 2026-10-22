@@ -1,4 +1,5 @@
-import { addDays, annualize, mnavOf, paybackYears, pctChange, rangeStats, readMnav, type Company, type RangeStats, type Reading, type Snapshot } from '@pw/shared';
+import { longDate } from './format.ts';
+import { addDays, annualize, daysBetween, mnavOf, paybackYears, pctChange, rangeStats, readMnav, type Company, type RangeStats, type Reading, type Snapshot } from '@pw/shared';
 
 /** Everything the overview and company page say about one company, computed once. */
 export interface Analysis {
@@ -9,6 +10,10 @@ export interface Analysis {
   mnav: number | null;
   /** Diluted mNAV over the 365 days before the latest snapshot. */
   range: RangeStats | null;
+  /** "past year", or "since <date>" when there is less than ~11 months of history. */
+  rangeLabel: string;
+  /** True when the range covers less than ~11 months. */
+  rangeShort: boolean;
   change30d: number | null;
   yield90d: number | null;
   /** 90-day coin yield compounded to a year. */
@@ -29,15 +34,19 @@ export function analyse(company: Company, snaps: Snapshot[]): Analysis {
   const m = latest?.metrics;
   const current = m ? mnavOf(m, 'diluted') : null;
   const yearAgo = latest ? addDays(latest.date, -365) : '';
-  const year = usable.filter((s) => s.date >= yearAgo).map((s) => mnavOf(s.metrics, 'diluted')).filter((v): v is number => v !== null);
+  const window = usable.filter((s) => s.date >= yearAgo && mnavOf(s.metrics, 'diluted') !== null);
+  const year = window.map((s) => mnavOf(s.metrics, 'diluted')!);
   const range = current !== null ? rangeStats(year, current) : null;
+  const first = window[0]?.date;
+  const rangeShort = !!(first && latest && daysBetween(first, latest.date) < 330);
+  const rangeLabel = rangeShort ? `since ${longDate(first!)}` : 'past year';
   const past = latest ? snapshotOnOrBefore(usable, addDays(latest.date, -30)) : undefined;
   const change30d = pctChange(past ? mnavOf(past.metrics, 'diluted') : null, current);
   const yield90d = m?.coinYield90d ?? null;
   const yieldAnnual = yield90d === null ? null : annualize(yield90d, 90);
   const payback = paybackYears(current, yieldAnnual);
-  const reading = m ? readMnav(m, { range, payback }) : null;
-  return { company, latest, usable, mnav: current, range, change30d, yield90d, yieldAnnual, payback, reading };
+  const reading = m ? readMnav(m, { range, rangeLabel, payback }) : null;
+  return { company, latest, usable, mnav: current, range, rangeLabel, rangeShort, change30d, yield90d, yieldAnnual, payback, reading };
 }
 
 export function paybackText(a: Pick<Analysis, 'mnav' | 'payback'>): string {

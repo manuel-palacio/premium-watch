@@ -81,7 +81,12 @@ function row(a: Analysis, scale: Scale): HTMLElement {
 function yearRank(a: Analysis): HTMLElement | string {
   if (!a.range) return '–';
   const pos = rangePosition(a.range.percentile);
-  return h('span', { class: `rank rank-${pos}`, title: `${mnav(a.range.min)} to ${mnav(a.range.max)} over the past year; today is higher than ${Math.round(a.range.percentile)}% of days` }, ordinal(Math.round(a.range.percentile)));
+  return h(
+    'span',
+    { class: 'rank-cell' },
+    h('span', { class: `rank rank-${pos}`, title: `${mnav(a.range.min)} to ${mnav(a.range.max)} ${a.rangeLabel}; today is higher than ${Math.round(a.range.percentile)}% of days` }, ordinal(Math.round(a.range.percentile))),
+    a.rangeShort ? h('span', { class: 'rank-note' }, a.rangeLabel) : null,
+  );
 }
 
 /** The one or two facts worth reading first. */
@@ -93,8 +98,9 @@ function headline(rows: Analysis[]): string {
   if (ranged.length > 1) {
     const cheap = ranged.reduce((a, b) => (a.range!.percentile <= b.range!.percentile ? a : b));
     const rich = ranged.reduce((a, b) => (a.range!.percentile >= b.range!.percentile ? a : b));
+    const short = ranged.some((r) => r.rangeShort);
     parts.push(
-      `Against its own past year, ${cheap.company.name} is the cheapest (higher than ${Math.round(cheap.range!.percentile)}% of days)${rich !== cheap ? ` and ${rich.company.name} the most expensive (${Math.round(rich.range!.percentile)}%)` : ''}.`,
+      `Against its own ${short ? 'recent history' : 'past year'}, ${cheap.company.name} is the cheapest (higher than ${Math.round(cheap.range!.percentile)}% of days)${rich !== cheap ? ` and ${rich.company.name} the most expensive (${Math.round(rich.range!.percentile)}%)` : ''}.`,
     );
   }
   if (!parts.length) {
@@ -145,7 +151,7 @@ function guide(): HTMLElement {
         'Past year and today',
         "The shaded bar is the diluted mNAV's range over the past year, the tick is its median and the dot is today. Every row uses the same scale and the vertical line is 1×. A dot near the left end of its own bar is cheap by that company's own standards.",
       ),
-      ...term('Year rank', 'Percentile of today\'s mNAV within the company\'s own past year: 10th means only 10% of days were cheaper. Low is cheap by the company\'s own standards, high is expensive.'),
+      ...term('Year rank', 'Percentile of today\'s mNAV within the company\'s own past year: 10th means only 10% of days were cheaper. Low is cheap by the company\'s own standards, high is expensive. When there is less than a year of data, the date under the rank says where the history starts; treat a short history with care.'),
       ...term('30 days', 'Change in diluted mNAV over 30 days. A shrinking premium means the market is cooling on the company.'),
       ...term('Coin yield 90d', 'Growth in coins per diluted share over 90 days: what the company is actually delivering for shareholders.'),
       ...term(
