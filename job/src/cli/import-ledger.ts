@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { parseLedgerCsv } from '@pw/shared';
 import { firestore } from '../store.ts';
@@ -14,7 +15,8 @@ if (!file) {
   process.exit(2);
 }
 
-const parsed = parseLedgerCsv(readFileSync(file, 'utf8'));
+// npm runs this from job/; resolve relative paths against the directory npm was started in.
+const parsed = parseLedgerCsv(readFileSync(resolve(process.env.INIT_CWD ?? '.', file), 'utf8'));
 if (parsed.errors.length) {
   for (const e of parsed.errors) console.error(`line ${e.line}: ${e.errors.join('; ')}`);
   process.exit(1);
