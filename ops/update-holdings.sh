@@ -37,6 +37,19 @@ wait $run_pid; rc=$?
 kill $wd_pid 2>/dev/null
 echo "=== $(date) exited rc=$rc ==="
 
+# Commit and push the auto-*.csv records of what was added. Only those paths are committed, so
+# other work in progress in the repo is left alone. A failure here is reported but doesn't fail
+# the run: the ledger is already written.
+commit_records() {
+  local files; files=$(git ls-files --others --modified -- 'data/ledger/auto-*.csv')
+  [ -n "$files" ] || return 0
+  echo "$files" | xargs git add -- &&
+    echo "$files" | xargs git commit -q -m "Ledger: auto holdings records $(date +%Y-%m-%d)" -- &&
+    git push -q origin HEAD ||
+    notify "⚠️ premium-watch: holdings records not committed/pushed, see $LOG"
+}
+[ $rc -eq 0 ] && commit_records
+
 SUMMARY=$(sed -n '/^holdings update /,$p' "$OUT")
 if [ $rc -eq 0 ] && [ -n "$SUMMARY" ]; then
   case "$SUMMARY" in
