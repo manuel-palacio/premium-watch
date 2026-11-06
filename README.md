@@ -120,7 +120,8 @@ disclosures and adds them to the ledger. For each active company:
 3. The job downloads the source itself (HTML or PDF) and checks the number is in it.
 
 Accepted entries go into the ledger with an `auto:` note, are appended to
-`data/ledger/auto-<date>.csv`, and the company's snapshots are rebuilt from the new date.
+`data/ledger/auto-<date>.csv` (committed and pushed by `ops/update-holdings.sh`), and the
+company's snapshots are rebuilt from the new date.
 Anything else is reported "to review". Share counts, debt and cash are still entered by hand.
 
 It runs from launchd on weekdays at 21:00 (`ops/update-holdings.sh`,
