@@ -12,6 +12,13 @@ set -u
 export PATH=/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 export HOME=${HOME:-/Users/manuel}
 unset ANTHROPIC_API_KEY
+# Long-lived subscription token from `claude setup-token`, kept in the Keychain (service claude-code,
+# account oauth-token), so an expired or rotated interactive login cannot break this unattended run.
+# Without the item, Claude Code falls back to the normal login.
+if _tok=$(security find-generic-password -s claude-code -a oauth-token -w 2>/dev/null) && [[ -n $_tok ]]; then
+  export CLAUDE_CODE_OAUTH_TOKEN=$_tok
+fi
+unset _tok
 REPO=/Users/manuel/Projects/premium-watch
 LOGDIR=$HOME/Library/Logs/premium-watch
 
