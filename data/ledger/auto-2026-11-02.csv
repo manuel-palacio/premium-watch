@@ -1,0 +1,3 @@
+companyId,effectiveDate,type,value,sourceUrl,note
+dfdv,2026-11-02,holdings,2600948,https://www.sec.gov/Archives/edgar/data/1805526/000180552626000147/dfdv-exx991_11226.htm,"auto: 8-K 2026-11-02 (Ex. 99.1): +5,336 SOL vs 2,595,612. The release gives no separate as-of date, so effectiveDate is the release date."
+mstr,2026-11-01,holdings,849327,https://www.sec.gov/Archives/edgar/data/1050446/000119312526442707/mstr-20261102.htm,"auto: 8-K 2026-11-02: BTC Update table ""As of November 1, 2026"" shows Aggregate BTC Holdings 849,327 (+811 BTC bought Oct 26–Nov 1). The figure is in a table, not a sentence, so evidence is the lead-in sentence. The api.strategy.com KPI endpoint also showed 849,327."

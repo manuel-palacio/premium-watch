@@ -1,0 +1,7 @@
+companyId,effectiveDate,type,value,sourceUrl,note
+mstr,2026-10-25,shares_basic,422354607,https://www.sec.gov/Archives/edgar/data/1050446/000105044626000060/mstr-20260930.htm,"10-Q Q3 cover: 402714357 class A + 19640250 class B"
+mstr,2026-11-05,shares_diluted,453112131,https://api.strategy.com/btc/bitcoinKpis,"Derived: 849327 BTC / dashboard 187443.0062 sats per assumed diluted share (read 2026-11-06); no stated count"
+mstr,2026-11-05,preferred,13136000000,https://api.strategy.com/btc/mstrKpiData,"Dashboard pref notional, rounded to $1M (read 2026-11-06); down from 13557M after STRC repurchases (8-K 2026-11-02: 2092035 STRC for $208.2M)"
+mstr,2026-11-01,cash,4922700000,https://www.sec.gov/Archives/edgar/data/1050446/000119312526442707/mstr-20261102.htm,"8-K 2026-11-02: USD Reserve 4.79B + USD Cash 132.7M"
+dfdv,2026-10-23,shares_basic,39742137,https://www.sec.gov/Archives/edgar/data/1805526/000121390026115933/ea0309455-01.htm,"DEF 14A record date"
+dfdv,2026-11-06,shares_diluted,52431880,https://defidevcorp.com/dashboard?tab=nav-sps,"Company fully diluted bridge incl. OTM warrants and converts, net of 3.6M prepaid-forward offset (read 2026-11-06)"

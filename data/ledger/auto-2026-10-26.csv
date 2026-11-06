@@ -1,0 +1,2 @@
+companyId,effectiveDate,type,value,sourceUrl,note
+dfdv,2026-10-26,holdings,2595612,https://www.sec.gov/Archives/edgar/data/1805526/000180552626000142/dfdv-exx991_102626.htm,"auto: 8-K 2026-10-26 (EX-99.1): +5,346 SOL since last update. The release gives no separate ""as of"" date, so effectiveDate is the release date. The evidence is the verbatim fragment of the sentence, because my fetch tool limits quotes to 125 characters."
