@@ -51,7 +51,7 @@ commit_records() {
   local files; files=$(git ls-files --others --modified -- 'data/ledger/auto-*.csv')
   [ -n "$files" ] || return 0
   echo "$files" | xargs git add -- &&
-    echo "$files" | xargs git commit -q -m "Ledger: auto holdings records $(date +%Y-%m-%d)" -- &&
+    echo "$files" | xargs git commit -q -m "chore(ledger): auto holdings records $(date +%Y-%m-%d)" -- &&
     git push -q origin HEAD ||
     notify "⚠️ premium-watch: holdings records not committed/pushed, see $LOG"
 }
